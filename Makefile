@@ -4,21 +4,21 @@
 # This application used C++ version 11
 #
 
-.PHONY: all clean client server clean_client clean_server
+.PHONY: all clean client gateway clean_client clean_gateway
 
-all: server client
+all: gateway client
 
 client:
 	$(MAKE) -C client
 
-server:
-	$(MAKE) -C server
+gateway:
+	$(MAKE) -C gateway
 
-clean: clean_client clean_server
+clean: clean_client clean_gateway
 
 clean_client:
 	$(MAKE) clean -C client
 
-clean_server:
-	$(MAKE) clean -C server
+clean_gateway:
+	$(MAKE) clean -C gateway
 

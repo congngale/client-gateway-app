@@ -14,7 +14,7 @@ OBJECT_FILES = $(shell find ./ -type f -name '*.o')
 MAC_TEMP_FILES = $(shell find ./ -type f -name '._*')
 
 # full sources
-SOURCES = $(SOURCE_FILES) server.cc
+SOURCES = $(SOURCE_FILES) gateway.cc
 
 # object files
 OBJECTS = $(patsubst %.cc,%.o,$(SOURCES))
@@ -31,12 +31,12 @@ CXXFLAGS = -D_GLIBCXX_USE_C99=1 -std=c++11 -Wall -Werror -Wno-sign-compare -ggdb
 # include -I
 CPPFLAGS = $(INCLUDE_DIRS)
 
-.PHONY: server clean
+.PHONY: gateway clean
 
-server: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJECTS) -o server $(LDFLAGS)
+gateway: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OBJECTS) -o gateway $(LDFLAGS)
 
 clean:
-	@- $(RM) server
+	@- $(RM) gateway
 	@- $(RM) $(OBJECT_FILES)
 	@- $(RM) $(MAC_TEMP_FILES)

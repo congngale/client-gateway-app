@@ -16,15 +16,17 @@ int main(int arg, char *args[]) {
   //init
   int socket_fd = 0;
   char data_buffer[BUFFER_LEN];
+  socklen_t server_address_len;
   struct sockaddr_in server_address;
 
   //clear buffer
   memset(data_buffer, '\0' ,sizeof(data_buffer));
+  memset(&server_address, '\0', sizeof(server_address));
 
   //create socket
-  socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+  socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-  cout << "Create socket result = " << socket_fd << endl;
+  cout << "Create socket with status = " << socket_fd << endl;
 
   //check
   if (socket_fd > 0) {
@@ -33,28 +35,21 @@ int main(int arg, char *args[]) {
     server_address.sin_port = htons(PORT);
     server_address.sin_addr.s_addr = inet_addr(HOST);
 
-    //connect to server
-    int status = connect(socket_fd, (struct sockaddr *)&server_address,
-      sizeof(server_address));
+    //send request to server
+    string request = "Request for new connection";
+    sendto(socket_fd, request.c_str(), request.length(), MSG_CONFIRM,
+      (const struct sockaddr*) &server_address, sizeof(server_address));
 
-    cout << "Connection status = " << status << endl;
+    cout << "Start waiting for response" << endl;
 
-    //check
-    if (status == 0) {
-      //send connect request
-      string request = "Request for new connection";
-      write(socket_fd, request.c_str(), request.length());
+    //receive data from server
+    recvfrom(socket_fd, data_buffer, BUFFER_LEN, MSG_WAITALL, 
+      (struct sockaddr*) &server_address, &server_address_len);
 
-      //read data
-      int len = read(socket_fd, data_buffer, BUFFER_LEN - 1);
+    cout << "Received data = " << data_buffer << endl;
 
-      //read data
-      while(len > 0) {
-        cout << "Received data = " << data_buffer << endl;
-
-        //read data
-        len = read(socket_fd, data_buffer, BUFFER_LEN - 1);
-      }
-    }
+    close(socket_fd);
   }
+
+  return 0;
 }
