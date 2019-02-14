@@ -1,5 +1,5 @@
 #
-# Copyright (c) 20189, Cong Nga Le. All rights reserved.
+# Copyright (c) 2019, Cong Nga Le. All rights reserved.
 #
 # This application used C++ version 11
 #
