@@ -10,6 +10,9 @@ SOURCE_FILES = $(shell find src -type f -name '*.cc')
 # object files
 OBJECT_FILES = $(shell find ./ -type f -name '*.o')
 
+# MAC OS temp files
+MAC_TEMP_FILES = $(shell find ./ -type f -name '._*')
+
 # full sources
 SOURCES = $(SOURCE_FILES) client.cc
 
@@ -36,3 +39,4 @@ client: $(OBJECTS)
 clean:
 	@- $(RM) client
 	@- $(RM) $(OBJECT_FILES)
+	@- $(RM) $(MAC_TEMP_FILES)

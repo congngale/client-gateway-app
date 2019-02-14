@@ -6,7 +6,7 @@
 
 .PHONY: all clean client server clean_client clean_server
 
-all: client server
+all: server client
 
 client:
 	$(MAKE) -C client
@@ -20,5 +20,5 @@ clean_client:
 	$(MAKE) clean -C client
 
 clean_server:
-	$(MAKE) client -C server
+	$(MAKE) clean -C server
 
