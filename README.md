@@ -1,2 +1,2 @@
-# networking-assignment1
-This is assignment 1 of Networking Course
+# client-gateway-application
+This is source code of client and gateway applications for networking assignment 1
