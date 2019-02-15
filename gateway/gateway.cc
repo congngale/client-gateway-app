@@ -4,14 +4,13 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "constants.h"
 #include "mqtt_client.h"
 #include "client_manager.h"
 
 using namespace std;
 
-#define PORT 2019
 #define INTERVAL 10000 //sleep for 10 miliseconds
-#define INTERFACE "/sys/class/net/enp0s3/address"
 
 int main(int arg, char *args[]) {
   //init
@@ -37,7 +36,7 @@ int main(int arg, char *args[]) {
   MqttClient mqtt_client(broker, gateway_id);
 
   //start client manager
-  ClientManager client_manager(PORT, &mqtt_client, gateway_id);
+  ClientManager client_manager(PORT, &mqtt_client);
 
   //loop
   while(true) {

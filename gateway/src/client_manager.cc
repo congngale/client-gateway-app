@@ -9,16 +9,15 @@
 #include "status.h"
 #include "command.h"
 #include "message.h"
+#include "constants.h"
 #include "client_request.h"
 #include "client_response.h"
 
 using namespace std;
 
-ClientManager::ClientManager(int port, MqttClient *mqtt_client,
-  string gateway_id) {
+ClientManager::ClientManager(int port, MqttClient *mqtt_client) {
   //start thread
-  m_thread = thread(&ClientManager::main_thread, this, port, mqtt_client,
-    gateway_id);
+  m_thread = thread(&ClientManager::main_thread, this, port, mqtt_client);
 
   //detach
   m_thread.detach();
@@ -28,8 +27,7 @@ ClientManager::~ClientManager() {
   //empty destructor
 }
 
-void ClientManager::main_thread(int port, MqttClient *mqtt_client,
-  string gateway_id) {
+void ClientManager::main_thread(int port, MqttClient *mqtt_client) {
   //init
   int socket_fd = 0;
   char data_buffer[BUFFER_LEN];
@@ -72,14 +70,14 @@ void ClientManager::main_thread(int port, MqttClient *mqtt_client,
     if (data_len > 0) {
       //handle request
       handle_request(socket_fd, string(data_buffer, data_len), mqtt_client,
-        &client_address, client_address_len, &clients, gateway_id);
+        &client_address, client_address_len, &clients);
     }
   }
 }
 
 void ClientManager::handle_request(int socket_fd, string data,
   MqttClient *mqtt_client, struct sockaddr_in *client_address, socklen_t 
-  client_address_len, set<string> *clients, string gateway_id) {
+  client_address_len, set<string> *clients) {
   //get client ip
   char client_ip[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &(client_address->sin_addr), client_ip, INET_ADDRSTRLEN);
@@ -92,21 +90,30 @@ void ClientManager::handle_request(int socket_fd, string data,
   //check action
   switch (request.action()) {
     case Command::ADD: {
-      //insert client
-      auto it = clients->insert(request.id());
-      
       //init response
       string response;
 
-      //check result
-      if (it.second) {
-        //set success response
-        response = ClientResponse(Command::ADD, request.id(),
-          Status::SUCCESS).to_json();
+      //check empty
+      if (!request.id().empty()) {
+        //insert client
+        auto it = clients->insert(request.id());
+        
+
+        //check result
+        if (it.second) {
+          cout << "Add new client with id = " << request.id() << endl;
+          //set success response
+          response = ClientResponse(Command::ADD, request.id(),
+            Status::NEW).to_json();
+        } else {
+          //set fail response
+          response = ClientResponse(Command::ADD, request.id(),
+            Status::EXISTED).to_json();
+        }
       } else {
-        //set fail response
+        //set wrong status
         response = ClientResponse(Command::ADD, request.id(),
-          Status::FAILED).to_json();
+            Status::INVALID).to_json();
       }
 
       //send response
@@ -121,8 +128,10 @@ void ClientManager::handle_request(int socket_fd, string data,
       
       //check client exist
       if (it != clients->end()) {
+        cout << "Publish data = " << request.data() << endl;
+
         //build message
-        Message message(gateway_id, request.id(), request.data());
+        Message message(request.id(), request.data());
 
         //public data to cloud mqtt with QoS = 1
         mqtt_client->publish_message(message.to_json(), 1);

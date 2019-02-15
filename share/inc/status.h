@@ -4,8 +4,9 @@
 class Status {
   public:
     enum {
-      SUCCESS = 0,
-      FAILED = 1
+      NEW = 0,
+      EXISTED = 1,
+      INVALID = 2
     };
 };
 #endif //STATUS_H

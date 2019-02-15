@@ -1,16 +1,13 @@
 #include "message.h"
 
-#include <json-c/json.h>
-
 #include "constants.h"
 
 using namespace std;
 
-Message::Message(string gateway_id, string client_id, string data) {
+Message::Message(string client_id, string data) {
   //init
   m_data = data;
   m_client_id = client_id;
-  m_gateway_id = gateway_id;
 }
 
 Message::~Message() {
@@ -27,16 +24,11 @@ string Message::to_json() {
   //check
   if (message) {
     //append id
-    json_object *data = json_object_new_string(m_data.c_str());
-    json_object_object_add(message, DATA, data);
+    json_object_object_add(message, CLIENT_ID, json_object_new_string(
+      m_client_id.c_str()));
 
     //append data
-    data = json_object_new_string(m_client_id.c_str());
-    json_object_object_add(message, CLIENT_ID, data);
-
-    //append action
-    data = json_object_new_string(m_gateway_id.c_str());
-    json_object_object_add(message, GATEWAY_ID, data);
+    json_object_object_add(message, DATA, get_value_object(m_data));
 
     //create json string
     json.append(json_object_to_json_string(message));
@@ -46,4 +38,34 @@ string Message::to_json() {
   }
 
   return json;
+}
+
+json_object* Message::get_value_object(string value) {
+  //init object
+  json_object* attribute;
+
+  //check value
+  if(value == TRUE_VALUE || value == FALSE_VALUE) {
+    //boolean attribute
+    attribute = json_object_new_boolean(value == TRUE_VALUE);
+  } else {
+    try {
+      //init index
+      size_t index;
+
+      //integer or long attribute
+      attribute = json_object_new_int64(stol(value, &index));
+
+      //check index position
+      if (index < value.length()) {
+        //string attribute not long/integer
+        attribute = json_object_new_string(value.c_str());
+      }
+    } catch (exception &e) {
+      //exception means string attribute
+      attribute = json_object_new_string(value.c_str());
+    }
+  }
+
+  return attribute;
 }
