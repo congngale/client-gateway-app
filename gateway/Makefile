@@ -23,7 +23,7 @@ OBJECTS = $(patsubst %.cc,%.o,$(SOURCES))
 INCLUDE_DIRS = -Iinc 
 
 # include -l
-LDFLAGS = -lmosquittopp -lmosquitto
+LDFLAGS = -lmosquittopp -lmosquitto -lpthread -luuid -ljson-c
 
 # build flags
 CXXFLAGS = -D_GLIBCXX_USE_C99=1 -std=c++11 -Wall -Werror -Wno-sign-compare -ggdb
