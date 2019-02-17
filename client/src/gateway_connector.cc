@@ -1,6 +1,5 @@
 #include "gateway_connector.h"
 
-#include <fstream>
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
@@ -16,22 +15,11 @@
 
 using namespace std;
 
-GatewayConnector::GatewayConnector(int port, string host) {
+GatewayConnector::GatewayConnector(int port, string host, string client_id) {
   //init
   m_port = port;
   m_host = host;
-
-  //read interface
-  ifstream net(INTERFACE);
-
-  //check open
-  if(net.is_open()) {
-    //read mac address
-    getline(net, m_client_id);
-
-    //close file
-    net.close();
-  }
+  m_client_id = client_id;
 }
 
 GatewayConnector::~GatewayConnector() {

@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <fstream>
 #include <unistd.h>
 
 #include "constants.h"
@@ -14,9 +15,22 @@ using namespace std;
 int main(int arg, char *args[]) {
   //init
   bool connected;
+  string client_id;
+
+  //read interface
+  ifstream net(INTERFACE);
+
+  //check open
+  if(net.is_open()) {
+    //read mac address
+    getline(net, client_id);
+
+    //close file
+    net.close();
+  }
 
   //create connector
-  GatewayConnector gateway_connector(PORT, GATEWAY);
+  GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
 
   //associate with gateway
   connected = gateway_connector.associate();

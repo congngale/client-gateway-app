@@ -6,7 +6,7 @@
 
 class GatewayConnector {
   public:
-    GatewayConnector(int port, std::string host);
+    GatewayConnector(int port, std::string host, std::string client_id);
     ~GatewayConnector();
 
     bool associate(void);

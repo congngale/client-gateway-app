@@ -28,6 +28,13 @@ int main(int arg, char *args[]) {
     net.close();
   }
 
+  //check
+  if(gateway_id.empty()) {
+    cout << "Network interface " << INTERFACE << " is not exist" << endl;
+    //exit
+    return 0;
+  }
+
   //init broker info
   BrokerInfo broker(17245, "m16.cloudmqtt.com", "Fcz6bH0Q5XIL",
     "abgwsudg");
