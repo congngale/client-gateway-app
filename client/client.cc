@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <unistd.h>
+
 #include "constants.h"
 #include "sensor_handler.h"
 #include "gateway_connector.h"
@@ -10,7 +12,6 @@ using namespace std;
 #define CLOUD "example.cloud.com"
 
 int main(int arg, char *args[]) {
-/*
   //init
   bool connected;
 
@@ -22,17 +23,22 @@ int main(int arg, char *args[]) {
 
   //check 
   if (connected) {
-    //TODO implement read sensor data and send report
-    //public sample data
-    gateway_connector.send_report("250");
-  }
-*/
+    //connect to sensor
+    SensorHandler sensor_handler(BH1750);
 
-  SensorHandler sensor_handler(BH1750);
+    //loop
+    while(true) {
+      //read value
+      int lux = sensor_handler.read_luminance();
 
-  //loop
-  while(true) {
-    cout << "Current light: " << sensor_handler.read_luminance() << endl;
+      cout << "Current light: " << lux << endl;
+
+      //send report to gateway
+      gateway_connector.send_report(to_string(lux));
+
+      //sleep interval
+      usleep(4000000); 
+    }
   }
 
   return 0;

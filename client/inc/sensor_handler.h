@@ -1,6 +1,9 @@
 #ifndef SENSOR_HANDLER_H
 #define SENSOR_HANDLER_H
 
+#include <stdio.h>
+#include <wiringPiI2C.h>
+
 #define BH1750 0x23
 
 class SensorHandler {
