@@ -5,6 +5,7 @@
 #define IP "ip"
 #define DATA "data"
 #define NAME "name"
+#define SENDER "sender"
 #define STATUS "status"
 #define ACTION "action"
 #define CLIENT_ID "client_id"
@@ -12,6 +13,9 @@
 #define GATEWAY_ID "gateway_id"
 
 #define BUFFER_LEN 4096
+
+#define LED_ON 1
+#define LED_OFF 0
 
 #define TRUE_VALUE "true"
 #define FALSE_VALUE "false"

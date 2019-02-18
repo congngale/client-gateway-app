@@ -8,14 +8,17 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include "action.h"
 #include "constants.h"
 #include "client_info.h"
 
 using namespace std;
 
-CloudConnector::CloudConnector(int port, string host, string client_id) {
+CloudConnector::CloudConnector(int port, string host, string client_id,
+  BluetoothService *bluetooth_service) {
   //start thread
-  m_thread = thread(&CloudConnector::main_thread, this, port, host, client_id);
+  m_thread = thread(&CloudConnector::main_thread, this, port, host, client_id,
+    bluetooth_service);
 
   //detach
   m_thread.detach();
@@ -25,7 +28,8 @@ CloudConnector::~CloudConnector() {
   //empty destructor
 }
 
-void CloudConnector::main_thread(int port, string host, string client_id) {
+void CloudConnector::main_thread(int port, string host, string client_id,
+  BluetoothService *bluetooth_service) {
   //init
   int socket_fd = 0;
   char data_buffer[BUFFER_LEN];
@@ -60,9 +64,25 @@ void CloudConnector::main_thread(int port, string host, string client_id) {
       //loop
       while (true) {
         //read data from server
-        read(socket_fd, data_buffer, BUFFER_LEN);
+        int data_len = read(socket_fd, data_buffer, BUFFER_LEN);
 
         cout << "Read data = " << data_buffer << endl;
+
+        //convert to model
+        Action action(string(data_buffer, data_len));
+
+        //check action
+        switch (action.action()) {
+          case LED_ON:
+            //on led
+            bluetooth_service->turn_on();
+            break;
+
+          case LED_OFF:
+            //off led
+            bluetooth_service->turn_off();
+            break;
+        }
       }
     }
   }

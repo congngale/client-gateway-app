@@ -5,11 +5,13 @@
 
 #include "constants.h"
 #include "sensor_handler.h"
+#include "bluetooth_service.h"
 #include "gateway_connector.h"
 
 using namespace std;
 
 #define GATEWAY "116.193.74.194"
+#define LED_MAC "F8:1D:78:60:3D:96"
 
 int main(int arg, char *args[]) {
   //init
@@ -28,11 +30,14 @@ int main(int arg, char *args[]) {
     net.close();
   }
 
+  //create bluetooth service
+  BluetoothService bluetooth_service(LED_MAC);
+
   //create gateway connector
   GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
 
   //create cloud connector
-  CloudConnector cloud_connector(PORT, CLOUD, client_id);
+  CloudConnector cloud_connector(PORT, CLOUD, client_id, &bluetooth_service);
 
   //associate with gateway
   connected = gateway_connector.associate();
