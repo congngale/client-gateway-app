@@ -11,6 +11,7 @@
 
 using namespace std;
 
+#define GATEWAY "192.168.1.6"
 #define LED_MAC "F8:1D:78:60:3D:96"
 
 int main(int arg, char *args[]) {
@@ -37,7 +38,7 @@ int main(int arg, char *args[]) {
   GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
 
   //create cloud connector
-  CloudConnector cloud_connector(PORT, CLOUD, client_id, &bluetooth_service);
+  CloudConnector cloud_connector(PORT, CLOUD_IP, client_id, &bluetooth_service);
 
   //associate with gateway
   connected = gateway_connector.associate();
