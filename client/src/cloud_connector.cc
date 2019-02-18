@@ -37,6 +37,8 @@ void CloudConnector::main_thread(int port, string host, string client_id) {
 
   //open socket
   socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+  cout << "Create cloud socket with id = " << socket_fd << endl;
   
   //check socket
   if (socket_fd > 0) {
@@ -49,10 +51,12 @@ void CloudConnector::main_thread(int port, string host, string client_id) {
     int status = connect(socket_fd, (struct sockaddr *) &server_address, 
       sizeof(server_address));
 
+    cout << "Connect to cloud with status = " << status << endl;
+
     //check
     if (status == 0) {
       //get message, cloud only need client id
-      string message = ClientInfo(client_id,"","").to_json();
+      string message = ClientInfo(client_id,"","", DEFAULT_THRESHOLD).to_json();
 
       //send client info
       send(socket_fd, message.c_str(), message.length(), 0);

@@ -5,11 +5,12 @@
 
 #include "constants.h"
 #include "sensor_handler.h"
+#include "cloud_connector.h"
 #include "gateway_connector.h"
 
 using namespace std;
 
-#define GATEWAY "116.193.74.194"
+#define GATEWAY "192.168.1.145"
 
 int main(int arg, char *args[]) {
   //init
@@ -32,7 +33,7 @@ int main(int arg, char *args[]) {
   GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
 
   //create cloud connector
-  CloudConnector cloud_connector(PORT, CLOUD, client_id);
+  CloudConnector cloud_connector(PORT, CLOUD_IP, client_id);
 
   //associate with gateway
   connected = gateway_connector.associate();
