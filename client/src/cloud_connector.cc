@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 
 #include "constants.h"
+#include "client_info.h"
 
 using namespace std;
 
@@ -50,15 +51,18 @@ void CloudConnector::main_thread(int port, string host, string client_id) {
 
     //check
     if (status == 0) {
+      //get message, cloud only need client id
+      string message = ClientInfo(client_id,"","").to_json();
+
+      //send client info
+      send(socket_fd, message.c_str(), message.length(), 0);
+
       //loop
       while (true) {
         //read data from server
         read(socket_fd, data_buffer, BUFFER_LEN);
 
         cout << "Read data = " << data_buffer << endl;
-
-        //sleep for 1 seconds
-        usleep(1000000);
       }
     }
   }

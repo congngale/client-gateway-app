@@ -26,7 +26,7 @@ OBJECTS = $(patsubst %.cc,%.o,$(SOURCES))
 INCLUDE_DIRS = -Iinc -I../share/inc
 
 # include -l
-LDFLAGS = -lmosquittopp -lmosquitto -lpthread -ljson-c
+LDFLAGS = -lmosquittopp -lmosquitto -lpthread -ljson-c -lcurl
 
 # build flags
 CXXFLAGS = -D_GLIBCXX_USE_C99=1 -std=c++11 -Wall -Werror -Wno-sign-compare -ggdb

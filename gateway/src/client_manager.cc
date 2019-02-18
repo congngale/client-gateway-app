@@ -10,14 +10,17 @@
 #include "command.h"
 #include "message.h"
 #include "constants.h"
+#include "client_info.h"
 #include "client_request.h"
 #include "client_response.h"
 
 using namespace std;
 
-ClientManager::ClientManager(int port, MqttClient *mqtt_client) {
+ClientManager::ClientManager(int port, MqttClient *mqtt_client, 
+  HttpClient *http_client) {
   //start thread
-  m_thread = thread(&ClientManager::main_thread, this, port, mqtt_client);
+  m_thread = thread(&ClientManager::main_thread, this, port, mqtt_client,
+    http_client);
 
   //detach
   m_thread.detach();
@@ -27,7 +30,8 @@ ClientManager::~ClientManager() {
   //empty destructor
 }
 
-void ClientManager::main_thread(int port, MqttClient *mqtt_client) {
+void ClientManager::main_thread(int port, MqttClient *mqtt_client,
+  HttpClient *http_client) {
   //init
   int socket_fd = 0;
   char data_buffer[BUFFER_LEN];
@@ -69,15 +73,16 @@ void ClientManager::main_thread(int port, MqttClient *mqtt_client) {
     //check
     if (data_len > 0) {
       //handle request
-      handle_request(socket_fd, string(data_buffer, data_len), mqtt_client,
-        &client_address, client_address_len, &clients);
+      handle_request(socket_fd, string(data_buffer, data_len), mqtt_client, 
+        http_client, &client_address, client_address_len, &clients);
     }
   }
 }
 
 void ClientManager::handle_request(int socket_fd, string data,
-  MqttClient *mqtt_client, struct sockaddr_in *client_address, socklen_t 
-  client_address_len, set<string> *clients) {
+  MqttClient *mqtt_client, HttpClient *http_client,
+  struct sockaddr_in *client_address, socklen_t client_address_len, 
+  set<string> *clients) {
   //get client ip
   char client_ip[INET_ADDRSTRLEN];
   inet_ntop(AF_INET, &(client_address->sin_addr), client_ip, INET_ADDRSTRLEN);
@@ -98,10 +103,30 @@ void ClientManager::handle_request(int socket_fd, string data,
         //insert client
         auto it = clients->insert(request.id());
         
-
         //check result
         if (it.second) {
           cout << "Add new client with id = " << request.id() << endl;
+
+          //init
+          long status;
+          string http_response;
+
+          //genenerate client name
+          string client_name = string(CLIENT_NAME_PREFIX) + 
+            to_string(clients->size());
+
+          //generate add client url
+          string url = string(CLOUD) + CLOUD_PORT + ADD_CLIENT;
+
+          //add client to cloud
+          ClientInfo client(request.id(), client_ip, client_name, 
+            DEFAULT_THRESHOLD);
+
+          //post to cloud
+          status = http_client->post(url, client.to_json(), &http_response);
+
+          cout << "Add client to cloud with status = " << status << endl;
+
           //set success response
           response = ClientResponse(Command::ADD, request.id(),
             Status::NEW).to_json();

@@ -9,8 +9,7 @@
 
 using namespace std;
 
-#define GATEWAY "127.0.0.1"
-#define CLOUD "example.cloud.com"
+#define GATEWAY "116.193.74.194"
 
 int main(int arg, char *args[]) {
   //init
@@ -29,8 +28,11 @@ int main(int arg, char *args[]) {
     net.close();
   }
 
-  //create connector
+  //create gateway connector
   GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
+
+  //create cloud connector
+  CloudConnector cloud_connector(PORT, CLOUD, client_id);
 
   //associate with gateway
   connected = gateway_connector.associate();
