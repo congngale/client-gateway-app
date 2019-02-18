@@ -5,12 +5,12 @@
 
 #include "constants.h"
 #include "sensor_handler.h"
+#include "cloud_connector.h"
 #include "bluetooth_service.h"
 #include "gateway_connector.h"
 
 using namespace std;
 
-#define GATEWAY "116.193.74.194"
 #define LED_MAC "F8:1D:78:60:3D:96"
 
 int main(int arg, char *args[]) {
