@@ -38,7 +38,7 @@ int main(int arg, char *args[]) {
   GatewayConnector gateway_connector(PORT, GATEWAY, client_id);
 
   //create cloud connector
-  CloudConnector cloud_connector(PORT, CLOUD_IP, client_id, &bluetooth_service);
+  CloudConnector cloud_connector(PORT, CLOUD, client_id, &bluetooth_service);
 
   //associate with gateway
   connected = gateway_connector.associate();

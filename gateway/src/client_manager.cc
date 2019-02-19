@@ -116,7 +116,7 @@ void ClientManager::handle_request(int socket_fd, string data,
             to_string(clients->size());
 
           //generate add client url
-          string url = string(CLOUD) + CLOUD_PORT + ADD_CLIENT;
+          string url = string(CLOUD_ENDPOINT) + ADD_CLIENT;
 
           //add client to cloud
           ClientInfo client(request.id(), client_ip, client_name, 

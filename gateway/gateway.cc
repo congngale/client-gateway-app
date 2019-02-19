@@ -68,7 +68,7 @@ int main(int arg, char *args[]) {
     "abgwsudg");
 
   //generate url
-  string url = string(CLOUD) + CLOUD_PORT + ADD_GATEWAY;
+  string url = string(CLOUD_ENDPOINT) + ADD_GATEWAY;
 
   //generate gateway
   GatewayInfo gateway(gateway_id, public_ip, gateway_name);
